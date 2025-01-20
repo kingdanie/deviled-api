@@ -88,11 +88,16 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         $post = Post::findOrFail($id);
+
+
+        if ($request->user()->cannot('update', $post)) {
+            abort(403);
+        }
         
-        $this->authorize('delete', $post);
+        // $this->authorize('delete', $post);
 
         $post->delete();
 
