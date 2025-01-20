@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -56,9 +61,14 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $post = Post::findOrFail($id);
         
-        $this->authorize('update', $post);
+        $post = Post::findOrFail($id);
+
+        if ($request->user()->cannot('update', $post)) {
+            abort(403);
+        }
+        
+        // $this->authorize('update', $post);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
