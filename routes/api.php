@@ -22,15 +22,15 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::get('posts', [PostController::class, 'index']);
+    Route::get('posts/{id}', [PostController::class, 'show'])->where('id', '[0-9]+');
 
     // Protected routes
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('sub')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         
         // Posts routes - using ID for modifications, URI for display
         Route::post('posts', [PostController::class, 'store']);
         Route::get('posts/by-uri/{uri}', [PostController::class, 'showByUri']);
-        Route::get('posts/{id}', [PostController::class, 'show'])->where('id', '[0-9]+');
         Route::put('posts/{id}', [PostController::class, 'update'])->where('id', '[0-9]+');
         Route::delete('posts/{id}', [PostController::class, 'destroy'])->where('id', '[0-9]+');
     });
